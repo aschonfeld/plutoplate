@@ -1,0 +1,108 @@
+<project name="Plutoplate" default="jarfile" basedir=".">
+	<property name="build.dir" value="${basedir}/bin" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="images.dir" value="/plutoplate/images/*.*"/>
+	<property name="main.class" value="plutoplate.PlutoplateExec"/>
+	<property name="jardir" value="${basedir}/documents"/>
+	<property name="jarfile" value="${jardir}/Plutoplate.jar"/>
+	
+	<path id="build.classpath">
+	  <fileset dir="${lib.dir}">
+	    <include name="*.jar"/>
+	  </fileset>
+	</path>
+	
+	<path id="phidgets.classpath">
+		<fileset dir="C:\\Program Files\Phidgets">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<pathconvert property="manifest.classpath" pathsep=" ">
+	  <path refid="build.classpath"/>
+	  <mapper>
+	    <chainedmapper>
+	       <flattenmapper/>
+	       <globmapper from="*.jar" to="*.jar"/>
+	    </chainedmapper>
+	  </mapper>
+	</pathconvert>
+	
+	
+	<target name="clean">
+		<delete dir="${build.dir}" description="Deletes the build directory"/>
+		<delete file="${jarfile}" description="Deletes the last jarfile"/>
+	</target>
+	
+	<target name="init" description="Creates the build directory">
+		<mkdir dir="${build.dir}" />
+	</target>
+		
+	<target name="compile" description="Compiles the code" depends="clean,init">
+		 <javac srcdir="${src.dir}" destdir="${build.dir}"
+		    debug="on" source="1.6" target="1.6">
+		 	<classpath refid="build.classpath"/>
+		 </javac>
+	</target>
+	
+	<target name="jarfile" depends="compile" description="Makes jar file"> 
+	 	<!-- copy any image/resource files in our src directories to the same "classes" directory --> 
+	    <copy todir="${build.dir}"> 
+	    	<fileset dir="${src.dir}"> 
+	               <include name="**/*.properties"/> 
+	               <include name="**/*.gif"/> 
+	        </fileset>
+	    </copy> 
+		<copy todir="${jardir}"> 
+			<fileset dir="${lib.dir}"/>
+		</copy>
+		
+		<!-- create the jar file from our compiled classes and manifest file --> 
+	    <jar destfile="${jarfile}" basedir="${build.dir}"> 
+	        <manifest> 
+	            <attribute name="Main-Class" value="${main.class}"/>
+	        	<attribute name="Class-Path" value="${manifest.classpath}"/>
+	        </manifest>
+	    	<fileset dir="${src.dir}" includes="${images.dir}" />
+	    	<fileset dir="${src.dir}" includes="${properties.dir}" />
+	    </jar> 
+	</target>
+	
+	<target name="jarfile-src" depends="compile" description="Makes jar file"> 
+	 	<!-- copy any image/resource files in our src directories to the same "classes" directory --> 
+	    <copy todir="${build.dir}"> 
+	    	<fileset dir="${src.dir}"> 
+	               <include name="**/*.properties"/> 
+	               <include name="**/*.gif"/>
+	    		   <include name="**/*.java"/>
+	        </fileset>
+	    </copy> 
+		<copy todir="${jardir}"> 
+			<fileset dir="${lib.dir}"/>
+		</copy>
+		
+		<!-- create the jar file from our compiled classes and manifest file --> 
+	    <jar destfile="${jarfile}" basedir="${build.dir}"> 
+	        <manifest> 
+	            <attribute name="Main-Class" value="${main.class}"/>
+	        	<attribute name="Class-Path" value="${manifest.classpath}"/>
+	        </manifest>
+	    	<fileset dir="${src.dir}" includes="${images.dir}" />
+	    	<fileset dir="${src.dir}" includes="${properties.dir}" />
+	    	<fileset dir="${src.dir}" includes="**.*.java" />
+	    </jar> 
+	</target>
+
+	
+	<target name="help">
+			<echo message="clean:       		Deletes the build directory, ${build.dir}" />
+			<echo message="init:     			Creates the build directory, ${build.dir}" />
+			<echo message="compile:     		Compiles the code" />
+			<echo message="jarfile:     		Makes jar file, ${jarfile}" />
+	</target>
+	
+	<target name="run_application" depends="jarfile">
+		<java jar="${jarfile}" fork="true"/>
+	</target>
+</project>
