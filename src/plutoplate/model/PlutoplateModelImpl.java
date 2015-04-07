@@ -1,11 +1,12 @@
 package plutoplate.model;
 
+import com.phidgets.InterfaceKitPhidget;
 import com.phidgets.PhidgetException;
 import com.phidgets.StepperPhidget;
-import java.io.PrintStream;
+import plutoplate.PlutoplateImages;
+
 import java.util.HashMap;
 import java.util.Map;
-import plutoplate.PlutoplateImages;
 
 public class PlutoplateModelImpl
   implements PlutoplateModel
@@ -13,7 +14,9 @@ public class PlutoplateModelImpl
   private PlutoplatePresetDB presetDB;
   private PlutoplateImages imageDB;
   private StepperPhidget stepper;
+  private InterfaceKitPhidget sensor;
   private Integer selectedMotor = Integer.valueOf(0);
+  private Integer selectedSensor = Integer.valueOf(0);
   private Map<Integer, Integer> lastPosition = new HashMap();
   
   public PlutoplateModelImpl(PlutoplateImages imageDB)
@@ -23,17 +26,25 @@ public class PlutoplateModelImpl
     this.imageDB = imageDB;
   }
   
-  public void initializeStepper()
-    throws PhidgetException
+  public void initializeStepper() throws PhidgetException
   {
     this.stepper = new StepperPhidget();
     this.stepper.openAny();
-    System.out.println("Waiting for the Phidget Stepper to be attached...");
+  }
+  
+  public void initializeSensor() throws PhidgetException{
+	  this.sensor = new InterfaceKitPhidget();
+	  this.sensor.openAny();
   }
   
   public StepperPhidget getStepper()
   {
     return this.stepper;
+  }
+  
+  public InterfaceKitPhidget getSensor()
+  {
+    return this.sensor;
   }
   
   public Integer getSelectedMotor()
@@ -46,13 +57,22 @@ public class PlutoplateModelImpl
     this.selectedMotor = motorId;
   }
   
+  public Integer getSelectedSensor()
+  {
+    return this.selectedSensor;
+  }
+  
+  public void setSelectedSensor(Integer sensorId)
+  {
+    this.selectedSensor = sensorId;
+  }
+  
   public Map<Integer, Integer> getLastPosition()
   {
     return this.lastPosition;
   }
   
-  public void close()
-    throws PhidgetException
+  public void close() throws PhidgetException
   {
     if (this.stepper != null)
     {
@@ -63,6 +83,11 @@ public class PlutoplateModelImpl
       }
       this.stepper.close();
       this.stepper = null;
+    }
+	if (this.sensor != null)
+    {
+      this.sensor.close();
+      this.sensor = null;
     }
   }
   

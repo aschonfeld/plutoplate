@@ -2,6 +2,7 @@ package plutoplate.controller;
 
 import com.phidgets.PhidgetException;
 import com.phidgets.StepperPhidget;
+import com.phidgets.InterfaceKitPhidget;
 import com.phidgets.event.*;
 import plutoplate.PlutoplateConstants;
 import plutoplate.model.PlutoplateModel;
@@ -18,6 +19,7 @@ public class PlutoplateControllerImpl
         implements PlutoplateController, ErrorListener, StepperPositionChangeListener, InputChangeListener, AttachListener, DetachListener
 {
     private Set<Integer> idsAttached = new HashSet<Integer>();
+	private Set<Integer> sensorIdsAttached = new HashSet<Integer>();
     private PlutoplateModel model;
     private PlutoplateView view;
     private Boolean resetInProgress = false;
@@ -178,24 +180,34 @@ public class PlutoplateControllerImpl
             throws PhidgetException
     {
         this.model.initializeStepper();
-        this.model.getStepper().addErrorListener(this);
-        this.model.getStepper().addInputChangeListener(this);
-        this.model.getStepper().addStepperPositionChangeListener(this);
-        this.model.getStepper().addAttachListener(this);
-        this.model.getStepper().addDetachListener(this);
+		this.model.initializeSensor();
+		this.model.getStepper().addErrorListener(this);
+		this.model.getStepper().addStepperPositionChangeListener(this);
+		this.model.getStepper().addAttachListener(this);
+		this.model.getStepper().addDetachListener(this);
+
+		this.model.getSensor().addInputChangeListener(this);
+		this.model.getSensor().addErrorListener(this);
+		this.model.getSensor().addAttachListener(this);
+		this.model.getSensor().addDetachListener(this);
     }
 
     public void close()
             throws PhidgetException
     {
         if (!this.idsAttached.isEmpty())
-        {
-            this.model.getStepper().removeErrorListener(this);
-            this.model.getStepper().removeInputChangeListener(this);
-            this.model.getStepper().removeStepperPositionChangeListener(this);
-            this.model.getStepper().removeAttachListener(this);
-            this.model.close();
-        }
+		{
+			this.model.getStepper().removeErrorListener(this);
+			this.model.getStepper().removeStepperPositionChangeListener(this);
+			this.model.getStepper().removeAttachListener(this);
+			this.model.getStepper().removeDetachListener(this);
+
+			this.model.getSensor().removeInputChangeListener(this);
+			this.model.getSensor().removeErrorListener(this);
+			this.model.getSensor().removeAttachListener(this);
+			this.model.getSensor().removeDetachListener(this);
+			this.model.close();
+		}
     }
 
     public void attached(AttachEvent attachEvent)
@@ -222,7 +234,12 @@ public class PlutoplateControllerImpl
                     this.view.enableControls();
                 }
                 this.view.getNoPhidgets().setVisible(false);
-            }else {
+            } else if(attachEvent.getSource() instanceof InterfaceKitPhidget){
+				if(this.debug){
+					System.out.println("Sensor Id Attached: " + (attachEvent.getSource().getDeviceID()));
+				}
+				this.sensorIdsAttached.add(Integer.valueOf(attachEvent.getSource().getDeviceID()));
+			} else {
                 System.out.println("Phidget Attached: " + (attachEvent.getSource().getDeviceID()));
             }
         }
@@ -245,7 +262,12 @@ public class PlutoplateControllerImpl
                 this.model.getLastPosition().put(this.model.getSelectedMotor(), Integer.valueOf(this.view.getMotorPosition().getValue()));
                 this.view.disableControls();
                 this.view.getNoPhidgets().setVisible(true);
-            }else {
+            } else if (detachEvent.getSource() instanceof InterfaceKitPhidget) {
+				if(this.debug){
+					System.out.println("Sensor Id Detached: " + (detachEvent.getSource().getDeviceID()));
+				}
+				this.sensorIdsAttached.remove(Integer.valueOf(detachEvent.getSource().getDeviceID()));
+			} else {
                 System.out.println("Phidget Detached: " + (detachEvent.getSource().getDeviceID()));
             }
         }
