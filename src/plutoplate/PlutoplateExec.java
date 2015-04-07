@@ -12,5 +12,11 @@ public class PlutoplateExec
     PlutoplateModel model = new PlutoplateModelImpl(new PlutoplateImages());
     
     PlutoplateController controller = new PlutoplateControllerImpl(model);
+	
+	for(String arg : args){
+    	if("-debug".equalsIgnoreCase(arg)){
+    		controller.debug();
+    	}
+    }
   }
 }

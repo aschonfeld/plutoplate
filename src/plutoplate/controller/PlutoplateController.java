@@ -13,7 +13,9 @@ public abstract interface PlutoplateController
     throws PhidgetException;
   
   public abstract void selectMotor(Integer paramInteger);
-  
+
+  public void debug();
+
   public abstract void resetPosition()
     throws PhidgetException;
   
