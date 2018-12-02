@@ -41,7 +41,7 @@
 		
 	<target name="compile" description="Compiles the code" depends="clean,init">
 		 <javac srcdir="${src.dir}" destdir="${build.dir}"
-		    debug="on" source="1.6" target="1.6">
+		    debug="on" source="1.8" target="1.8">
 		 	<classpath refid="build.classpath"/>
 		 </javac>
 	</target>

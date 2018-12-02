@@ -48,7 +48,8 @@ sourceSets {
       srcDirs = ['src/plutoplate']
     }
     resources {
-      srcDirs = ["src/plutoplate"]
+      srcDirs = ["src/"]
+      includes = ["**/*.png", "**/*.jpg"]
     }
   }
 }

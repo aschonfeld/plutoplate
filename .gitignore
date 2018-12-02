@@ -1,2 +1,9 @@
 .gradle
 build
+/bin/
+.classpath
+.project
+keystore.jks
+.idea/
+out
+plutoplate.iml

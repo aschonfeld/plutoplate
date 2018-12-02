@@ -57,7 +57,7 @@ functionEnd
 
 ; These are the programs that are needed by ACME Suite.
 Section -Prerequisites
-  IfFileExists "$PROGRAMFILES\Phidgets\phidget21.dll" done do_phidgets_install
+  IfFileExists "$PROGRAMFILES\Phidgets\phidget22.dll" done do_phidgets_install
   
   do_phidgets_install:
 	Var /GLOBAL EXIT_CODE
@@ -67,8 +67,8 @@ Section -Prerequisites
 	
 		StrCmp $phidgets32DidDownload success installPhidgets32Manual
 	installPhidgets32Manual:
-		File ".\Prerequisites\Phidget-x86_2.1.8.20140924.exe"
-		ExecWait ".\Prerequisites\Phidget-x86_2.1.8.20140924.exe"
+		File ".\Prerequisites\Phidget22-x86_1.0.0.20181105.exe"
+		ExecWait ".\Prerequisites\Phidget22-x86_1.0.0.20181105.exe"
 		IfErrors fail
 		Goto is_reboot_requested
 	installPhidgets64:
@@ -78,8 +78,8 @@ Section -Prerequisites
 		
 		StrCmp $phidgets64DidDownload success installPhidgets64Manual
 	installPhidgets64Manual:
-		File ".\Prerequisites\Phidget-x64_2.1.8.20140924.exe"
-		ExecWait ".\Prerequisites\Phidget-x64_2.1.8.20140924.exe"
+		File ".\Prerequisites\Phidget22-x64_1.0.0.20181105.exe"
+		ExecWait ".\Prerequisites\Phidget22-x64_1.0.0.20181105.exe"
 		
 		IfErrors fail
 		Goto is_reboot_requested
@@ -104,7 +104,7 @@ section "install"
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "Plutoplate.jar"
-	file "phidget21.jar"
+	file "phidget22.jar"
 	file "logo.ico"
 	# Add any other files for the install directory (license files, app data, etc) here
  
@@ -159,7 +159,7 @@ section "uninstall"
  
 	# Remove files
 	delete $INSTDIR\Plutoplate.jar
-	delete $INSTDIR\phidget21.jar
+	delete $INSTDIR\phidget22.jar
 	delete $INSTDIR\logo.ico
  
 	# Always delete uninstaller as the last action
