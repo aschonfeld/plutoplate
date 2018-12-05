@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "edu.sc.seis:macAppBundle:2.3.0"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.3'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: "edu.sc.seis.macAppBundle"
+apply plugin: 'application'
+apply plugin: 'java'
+
+mainClassName = "plutoplate.PlutoplateExec"
+
+macAppBundle {
+  mainClassName = "plutoplate.PlutoplateExec"
+  runtimeConfigurationName = 'shadow'
+  jarTask = 'shadowJar'
+  icon = "pluto.icns"
+  bundleJRE = true
+  certIdentity = "9NRQTQQ9YN"
+  bundleExecutable = "${->project.name}"
+  javaProperties.put("java.library.path", "/Library/Java/Extensions")
+
+  dmgName = "Plutoplate"
+  appName = "Plutoplate"
+  volumeName = "Plutoplate"
+  backgroundImage = "background.png"
+}
+
+repositories{
+  jcenter()
+}
+
+tasks.withType(JavaCompile) {
+  sourceCompatibility='1.8'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src/plutoplate']
+    }
+    resources {
+      srcDirs = ["src/plutoplate"]
+    }
+  }
+}
+
+dependencies {
+  compile fileTree(dir: 'lib', include: ['*.jar'])
+}
+ 
